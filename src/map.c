@@ -6,44 +6,57 @@
 /*   By: felperei <felperei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:38:17 by felperei          #+#    #+#             */
-/*   Updated: 2024/09/11 14:07:42 by felperei         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:10:46 by felperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
+#include <fcntl.h>  // Para open
+#include <unistd.h> // Para read, close
+#include <stdlib.h> // Para malloc, free
+
+
+
+// Função para ler o arquivo e retornar o conteúdo como um array de strings
 char **read_map(char *path) {
     int fd = open(path, O_RDONLY);
     if (fd == -1) return NULL;
 
-    char *line;
-    char *holder_map = ft_strdup("");
-    char **map;
+    char buffer[1024];
+    ssize_t bytes_read;
+    char *holder_map = malloc(1);
+    if (!holder_map) return NULL;
 
-    while ((line = get_next_line(fd))) {
+    holder_map[0] = '\0';
+
+    // Ler o arquivo em partes
+    while ((bytes_read = read(fd, buffer, 1023)) > 0) {
+        buffer[bytes_read] = '\0';
         char *temp = holder_map;
-        holder_map = ft_strjoin(holder_map, line);
+        holder_map = ft_strjoin(holder_map, buffer);
         free(temp);
-        free(line);
+        if (!holder_map) return NULL;
     }
+
     close(fd);
-    
-    map = ft_split(holder_map, '\n');
+    char **map = ft_split(holder_map, '\n');
     free(holder_map);
-    
+
     return map;
 }
 
-int	size_map(t_data *game)
+
+int	size_map(t_data *dt)
 {
 	int	i;
 
-	game->w_map = ft_strlen(game->map2d[0]);
+	dt->w_map = ft_strlen(dt->map2d[0]);
 	i = 0;
-	while (game->map2d[i])
+	while (dt->map2d[i])
 		i++;
-	game->h_map = i;
-	if (game->w_map != game->h_map)
+	dt->h_map = i;
+	if (dt->w_map != dt->h_map)
 		return (1);
 	return (0);
 }

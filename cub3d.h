@@ -6,7 +6,7 @@
 /*   By: felperei <felperei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 11:40:20 by felperei          #+#    #+#             */
-/*   Updated: 2024/09/11 13:58:08 by felperei         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:51:49 by felperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,9 @@ typedef struct s_textures
 
 typedef struct s_data // the data structure
 {
+    char **backup;
     char **map2d; // the map
+    int **map; // the map
     int p_x;      // player x position in the map
     int p_y;      // player y position in the map
     int w_map;    // map width
@@ -128,8 +130,7 @@ void move_player_backward(t_mlx *mlx);
 void game_events(int keycode, t_mlx *game);
 char **read_map(char *path);
 int keypress(int keycode, t_mlx *game);
-int size_map(t_data *game);
-
+int	size_map(t_data *dt);
 void init_the_player(t_mlx *mlx);
 void draw_buffer(void *mlx_ptr, void *win_ptr, void *img_ptr, int *buffer);
 int get_texture_color(void *img_ptr, int x, int y);

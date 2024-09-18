@@ -47,7 +47,6 @@ void draw_buffer(void *mlx_ptr, void *win_ptr, void *img_ptr, int *buffer) {
             data[(y * S_W + x) * 4] = color & 0xFF;
             data[(y * S_W + x) * 4 + 1] = (color >> 8) & 0xFF;
             data[(y * S_W + x) * 4 + 2] = (color >> 16) & 0xFF;
-            data[(y * S_W + x) * 4 + 3] = 0; // Alpha channel (not used)
         }
     }
     mlx_put_image_to_window(mlx_ptr, win_ptr, img_ptr, 0, 0);
@@ -89,7 +88,7 @@ void perform_dda(int *mapX, int *mapY, t_raycast *rc, t_mlx*mlx) {
             *mapY += rc->stepY;
             rc->side = 1;
         }
-        if (worldMap[*mapX][*mapY] > 0)
+        if (mlx->dt->map2d[*mapX][*mapY] > 0)
             rc->hit = 1;
     }
 }
@@ -161,7 +160,7 @@ void raycasting(t_mlx *mlx, int *buffer) {
         int texX = (int)((rc.side == 0 ? posY + rc.perpWallDist * rc.rayDirY : posX + rc.perpWallDist * rc.rayDirX) * TEX_WIDTH) % TEX_WIDTH;
 
         // Render the column
-         for (int y = 0; y < S_H; y++) {
+        for (int y = 0; y < S_H; y++) {
         if (y < drawStart)
             buffer[y * S_W + x] = 0x87CEEB; // Sky color
         else if (y >= drawStart && y <= drawEnd) {
@@ -176,13 +175,76 @@ void raycasting(t_mlx *mlx, int *buffer) {
     }
 }
 
+char **get_map(char **data)
+{
+    int i;
+    int j;
+    int rows;
+    char **map;
+    int start_line = 6;
 
+    rows = 0;
+    while (data[start_line + rows])
+        rows++;
+    map = malloc(sizeof(char *) * (rows + 1));
+    if (!map)
+        return (NULL);
+    for (i = 0; i < rows; i++)
+    {
+        map[i] = malloc(sizeof(char) * (ft_strlen(data[start_line + i]) + 1));
+        if (!map[i])
+            return (NULL);
+        j = 0;
+        while (data[start_line + i][j])
+        {
+            map[i][j] = data[start_line + i][j];
+            j++;
+        }
+        map[i][j] = '\0';
+    }
+    map[rows] = NULL;
+    return (map);
+}
 
-// t_data *init_argumet(char *av) {
-//     t_data *dt = malloc(sizeof(t_data));
-//     dt->map2d = read_map(av); // Chama a função para ler o mapa
-//     // size_map(dt); // Função que você deve implementar para calcular o tamanho do mapa
-//     return dt; // Retorna a estrutura de dados
+int	**copy_char_to_int(char **char_matrix, int rows, int cols)
+{
+	int	**int_matrix;
+	int	i;
+	int	j;
+
+	i = 0;
+	int_matrix = (int **)malloc(rows * sizeof(int *));
+	if (!int_matrix)
+		return (NULL);
+	while (i < rows)
+	{
+		int_matrix[i] = (int *)malloc(cols * sizeof(int));
+		if (!int_matrix[i])
+			return (NULL);
+		j = 0;
+		while (j < cols)
+		{
+			if (ft_isdigit(char_matrix[i][j]))
+				int_matrix[i][j] = char_matrix[i][j] - '0';
+			else
+				int_matrix[i][j] = 0;
+			j++;
+		}
+		i++;
+	}
+	return (int_matrix);
+}
+// t_data *init_argumet(char *av)	// init the data structure
+// {
+// 	t_data	*dt;
+// 	dt = malloc(sizeof(t_data));
+// 	// dt-> = read_map(av);
+//     // dt->map2d = get_map(dt);
+// 	size_map(dt);
+// 	// dt->p_y = 3; // player y position in the map
+// 	// dt->p_x = 19; // player x position in the map
+//  // map height
+// 	return (dt); // return the data structure
 // }
 
 int main(int ac, char **av) {
@@ -191,12 +253,18 @@ int main(int ac, char **av) {
         return 1;
     }
 
-    // t_data *data = init_argumet(av[1]);
-	
     void *tex_ptr;
     t_mlx mlx;
     int buffer[S_W * S_H] = {0};
-	// mlx.dt = data;
+    mlx.ply = calloc(1, sizeof(t_player));
+    mlx.ray = calloc(1, sizeof(t_ray));
+    mlx.textures = calloc(1, sizeof(t_textures));
+    mlx.rc = calloc(1, sizeof(t_raycast));
+    mlx.dt = calloc(1, sizeof(t_data));
+    mlx.dt->backup = read_map(av[1]);
+    mlx.dt->map2d = get_map( mlx.dt->backup);
+    size_map(mlx.dt);
+    mlx.dt->map = copy_char_to_int(mlx.dt->map2d, 20, 20);
     mlx.mlx_p = mlx_init();
     mlx.win = mlx_new_window(mlx.mlx_p, S_W, S_H, "Cub3d");
     mlx.img_ptr = mlx_new_image(mlx.mlx_p, S_W, S_H); 
@@ -208,18 +276,31 @@ int main(int ac, char **av) {
     }
 
     // Set up the initial position, direction, and plane
-   mlx.ply = calloc(1, sizeof(t_player));
-    mlx.ray = calloc(1, sizeof(t_ray));
-    mlx.textures = calloc(1, sizeof(t_textures));
-    mlx.rc = calloc(1, sizeof(t_raycast));
-    mlx.ply->plyr_x = 22.0;
-    mlx.ply->plyr_y = 11.5;
+ 
+    // mlx.dt->map2d = get_map(mlx.dt);
+    int a = 0;
+    int x = 0;
+
+    while ( mlx.dt->map[a])
+    {
+        x = 0;
+        while (mlx.dt->map2d[a][x])
+        {
+            printf("%d", mlx.dt->map2d[a][x]);
+            x++;
+
+        }
+        printf("\n");
+        a++;
+    }
+    mlx.ply->plyr_x = 5;
+    mlx.ply->plyr_y = 5;
     mlx.ray->dirX = -1.0;
     mlx.ray->dirY = 0.0;
     mlx.ray->planeX = 0.0;
     mlx.ray->planeY = 0.66;
     mlx.textures->north = tex_ptr;
-	 mlx.ply->angle = 0;
+	mlx.ply->angle = 0;
     // Main loop
     int done = 0;
     while (!done) {
@@ -231,7 +312,6 @@ int main(int ac, char **av) {
         draw_buffer(mlx.mlx_p, mlx.win, mlx.img_ptr, buffer);
         mlx_loop(mlx.mlx_p);
     }
-// st
     mlx_destroy_image(mlx.mlx_p, mlx.img_ptr);
     mlx_destroy_image(mlx.mlx_p, tex_ptr);
     mlx_destroy_window(mlx.mlx_p, mlx.win);

@@ -3,36 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: felperei <felperei@student.42.rio>         +#+  +:+       +#+        */
+/*   By: felperei <felperei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 09:50:17 by felperei          #+#    #+#             */
-/*   Updated: 2023/11/21 09:50:27 by felperei         ###   ########.fr       */
+/*   Updated: 2024/09/18 10:49:09 by felperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s)
-{
-	size_t	size;
-	char	*dup;
-	size_t	i;
+// char	*ft_strdup(const char *s)
+// {
+// 	size_t	size;
+// 	char	*dup;
+// 	size_t	i;
 
-	i = 0;
-	while (s[i])
-		i++;
-	size = (i + 1);
-	dup = (char *)malloc(size * sizeof(char));
-	if (!dup)
-		return (NULL);
-	i = 0;
-	while (i < size)
-	{
-		dup[i] = s[i];
-		i++;
-	}
-	return (dup);
-}
+// 	i = 0;
+// 	while (s[i])
+// 		i++;
+// 	size = (i + 1);
+// 	dup = (char *)malloc(size * sizeof(char));
+// 	if (!dup)
+// 		return (NULL);
+// 	i = 0;
+// 	while (i < size)
+// 	{
+// 		dup[i] = s[i];
+// 		i++;
+// 	}
+// 	return (dup);
+// }
 
 char	*gnl_strchr(const char *s, int c)
 {
@@ -47,15 +47,15 @@ char	*gnl_strchr(const char *s, int c)
 	return (NULL);
 }
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
+// size_t	ft_strlen(const char *s)
+// {
+// 	size_t	i;
 
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
+// 	i = 0;
+// 	while (s[i])
+// 		i++;
+// 	return (i);
+// }
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
