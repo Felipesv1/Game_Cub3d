@@ -88,7 +88,7 @@ void perform_dda(int *mapX, int *mapY, t_raycast *rc, t_mlx*mlx) {
             *mapY += rc->stepY;
             rc->side = 1;
         }
-        if (mlx->dt->map2d[*mapX][*mapY] > 0)
+        if (worldMap[*mapX][*mapY] > 0)
             rc->hit = 1;
     }
 }
@@ -264,7 +264,7 @@ int main(int ac, char **av) {
     mlx.dt->backup = read_map(av[1]);
     mlx.dt->map2d = get_map( mlx.dt->backup);
     size_map(mlx.dt);
-    mlx.dt->map = copy_char_to_int(mlx.dt->map2d, 20, 20);
+    // mlx.dt->map = copy_char_to_int(mlx.dt->map2d, 20, 20);
     mlx.mlx_p = mlx_init();
     mlx.win = mlx_new_window(mlx.mlx_p, S_W, S_H, "Cub3d");
     mlx.img_ptr = mlx_new_image(mlx.mlx_p, S_W, S_H); 
@@ -281,12 +281,12 @@ int main(int ac, char **av) {
     int a = 0;
     int x = 0;
 
-    while ( mlx.dt->map[a])
+    while ( mlx.dt->map2d[a])
     {
         x = 0;
         while (mlx.dt->map2d[a][x])
         {
-            printf("%d", mlx.dt->map2d[a][x]);
+            printf("%c", mlx.dt->map2d[a][x]);
             x++;
 
         }

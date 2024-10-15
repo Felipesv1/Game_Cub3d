@@ -6,7 +6,7 @@
 /*   By: felperei <felperei@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 11:13:21 by felperei          #+#    #+#             */
-/*   Updated: 2024/09/16 09:19:19 by felperei         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:40:24 by felperei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,11 @@ int	keypress(int keycode, t_mlx *game)
 {
 	if (keycode == KEY_W || keycode == KEY_UP)
 	{
-		// game->ply->l_r = -1;
 		move_player_forward(game);
+		game->ply->plyr_x += 1;
 	}
 	else if (keycode == KEY_S || keycode == KEY_DOWN)
 	{
-		// game->ply->l_r = 1;
 		move_player_backward(game);
 	}
 	else if (keycode == KEY_D || keycode == KEY_RIGHT)
